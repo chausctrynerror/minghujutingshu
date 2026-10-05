@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>明湖居挑戰賽</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 24px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        header p {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        .content {
+            padding: 30px;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+        .welcome-box {
+            text-align: center;
+            padding: 20px;
+        }
+        .welcome-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .form-group input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            border-color: var(--secondary-color);
+        }
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        .btn:hover {
+            background-color: #2471a3;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .alert {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ecf0f1;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        .question-title {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .options-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        .options-list li {
+            background: #fdfefe;
+            border: 2px solid #e2e8f0;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+        .options-list li:hover {
+            background: #ebf5fb;
+            border-color: var(--secondary-color);
+        }
+        .options-list li.selected {
+            background: #ebf5fb;
+            border-color: var(--secondary-color);
+            font-weight: bold;
+        }
+        .quiz-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .result-box {
+            text-align: center;
+            padding: 20px;
+        }
+        .result-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .score-card {
+            background: #ebf5fb;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            border: 2px solid #a9cce3;
+        }
+        .score-card .report-display {
+            font-size: 24px;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .score-card .score-display {
+            font-size: 42px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        .score-card .details-display {
+            font-size: 16px;
+            color: #555;
+        }
+        .review-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .review-section h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        .review-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .review-item.correct {
+            border-left: 5px solid var(--success-color);
+        }
+        .review-item.incorrect {
+            border-left: 5px solid var(--accent-color);
+        }
+        .review-q {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .review-ans {
+            font-size: 14px;
+        }
+        .user-ans {
+            color: var(--accent-color);
+        }
+        .correct-ans {
+            color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>明湖居挑戰賽</h1>
+            <p>為師就來看看你看懂了《明湖居聽書》的多少內容</p>
+        </header>
+        <div class="content">
+            <div id="screen-home" class="screen active">
+                <div class="welcome-box">
+                    <h2>你已經進入「明湖居挑戰賽」。</h2>
+                    <p style="margin-bottom: 25px; color: #666;">本次挑戰將會從題庫中隨機抽選 20 道題目（每題 5 分，總分 100 分），不拿到80分的話可交不了功課哦！你們就好好掙扎吧！哈哈哈哈哈！</p>
+                    <div class="form-group">
+                        <label for="player-name">請輸入您的姓名：</label>
+                        <input type="text" id="player-name" placeholder="例如：陳大文" autocomplete="off">
+                        <div id="name-alert" class="alert"></div>
+                    </div>
+                    <button class="btn" id="start-btn">開始遊戲</button>
+                </div>
+            </div>
+
+            <div id="screen-quiz" class="screen">
+                <div class="quiz-header">
+                    <span id="question-counter">題目 1 / 20</span>
+                    <span id="score-tracker">當前得分：0 分</span>
+                </div>
+                <div id="question-container">
+                    <div class="question-title" id="question-text">題目載入中...</div>
+                    <ul class="options-list" id="options-list">
+                    </ul>
+                </div>
+                <div class="quiz-footer">
+                    <button class="btn" id="next-btn" disabled>下一題</button>
+                </div>
+            </div>
+
+            <div id="screen-result" class="screen">
+                <div class="result-box">
+                    <h2>挑戰結算畫面</h2>
+                    <div class="score-card">
+                        <div class="report-display" id="result-report">報告老師！我某某在這個挑戰中得到了 0分！</div>
+                        <div class="score-display" id="result-score">0 分</div>
+                        <div class="details-display" id="result-details">答對 0 題 / 共 20 題</div>
+                    </div>
+                    <button class="btn" id="restart-btn" style="margin-bottom: 30px;">重新挑戰</button>
+                    
+                    <div class="review-section">
+                        <h3>答題檢討與正確答案</h3>
+                        <div id="review-list">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [{"q": "《明湖居聽書》的作者是誰？", "options": ["老舍", "魯迅", "朱自清", "劉鶚"], "ans": 3}, {"q": "在《明湖居聽書》第1段中，琴師的衣着是甚麼？", "options": ["黑布長衫", "灰色短打", "青色布褂", "藍布長衫"], "ans": 3}, {"q": "琴師的容貌特徵是甚麼？", "options": ["長長鴨蛋臉兒眉清目秀", "瓜子臉兒面皮白淨娟秀", "長長的臉兒，一臉疙疸，像風乾福橘皮", "方臉粗眉大眼滿臉鬍渣"], "ans": 2}, {"q": "琴師彈大調時，全用甚麼指法？", "options": ["滾動指法", "輪指撥弦", "單挑指法", "雙勾指法"], "ans": 1}, {"q": "琴師彈奏時的音樂效果如何？", "options": ["輕快活潑如流水潺潺節奏明快", "如泣如訴哀怨動人令人傷心", "入耳動心，恍若有幾十根弦，幾百個指頭在演奏一般", "高亢激越震耳欲聾氣勢磅礴"], "ans": 2}, {"q": "琴師演奏時，即使台下的甚麼聲音也壓不下琴音？", "options": ["急促腳步聲", "大聲叫好聲", "熱烈鼓掌聲", "喧鬧說話聲"], "ans": 1}, {"q": "黑妞在第2段中，年齡約是多少？", "options": ["大約十四五歲", "大約十六七歲", "大約二十一二歲", "大約十八九歲"], "ans": 1}, {"q": "黑妞的衣着是甚麼？", "options": ["青色夾襖配灰布裙邊", "白布長衫綴黑色邊框", "藍布外褂褲且黑布鑲滾", "棗紅色土布衣褲套裝"], "ans": 2}, {"q": "黑妞的容貌是甚麼？", "options": ["長長的臉兒滿面疙疸", "圓臉大眼短髮齊肩面容", "瓜子臉兒面皮白淨秀美", "長長鴨蛋臉兒，梳一個抓髻，戴了一副銀耳環"], "ans": 3}, {"q": "黑妞說書時，歌喉遽發，字字清脆，聲聲宛轉，如甚麼？", "options": ["新鶯出谷乳燕歸巢般", "高山流水遇知音絕唱", "百鳥朝鳳鳴叫聲響亮", "大珠小珠落玉盤之聲"], "ans": 0}, {"q": "黑妞說書時，每句幾個字？", "options": ["每句十個字", "每句五個字", "每句三個字", "每句七個字"], "ans": 3}, {"q": "黑妞說書時，每段有多少句？", "options": ["每段大約五句", "每段數十句多", "每段整百句多", "每段大約十句"], "ans": 1}, {"q": "黑妞表演的項目是甚麼？", "options": ["彈奏琵琶曲", "說唱鼓書藝", "三弦子彈唱", "戲曲大合唱"], "ans": 1}, {"q": "白妞（王小玉）在第4段至第5段中，年齡約是多少？", "options": ["大約十八九歲", "大約十五六歲", "大約十六七歲", "大約二十二三歲"], "ans": 0}, {"q": "白妞的衣着裝束怎樣？", "options": ["裝束與前一個黑妞一樣", "比黑妞華麗得多呀", "穿着平民布衣裳褲", "穿着宮廷戲服裝束"], "ans": 0}, {"q": "白妞的容貌是：瓜子臉兒，面皮白淨，只覺得秀而不媚，清而不寒，雙眼如甚麼？", "options": ["星光閃電寶石深潭中映照着明鏡微波", "秋水寒星寶珠白水銀裏頭養着兩丸黑水銀", "明月清風碧水水晶瓶中藏着兩枚夜明珠", "清泉明鏡琥珀碧波中游着雙魚活潑靈動"], "ans": 1}, {"q": "白妞的唇齒特徵是甚麼？", "options": ["貝齒紅唇亮麗", "唇紅齒白分明", "薄唇白齒面容", "櫻桃小口微開"], "ans": 1}, {"q": "作者形容白妞的歌聲像甚麼拋入天際？", "options": ["一條長絲線", "一道閃電光", "一根細銀針", "一線鋼絲索"], "ans": 3}, {"q": "作者形容白妞的歌聲恍如由甚麼西面攀登泰山？", "options": ["傲來峰西面", "玉皇頂西面", "日觀峰西面", "天柱峰西面"], "ans": 0}, {"q": "作者形容白妞的歌聲如一條飛蛇，在哪裏盤旋穿插？", "options": ["廬山三疊泉瀑布流經", "黃山三十六峰半中腰裏", "華山長空棧道險峻處", "泰山十八盤山道之中"], "ans": 1}, {"q": "作者形容白妞的歌聲像甚麼，一個彈子上天，隨化作千百道五色火光？", "options": ["耀眼夜空流星", "璀璨節慶爆竹", "高空信號彈光", "絢麗東洋煙火"], "ans": 3}, {"q": "字詞「疸」在文中的意思是甚麼？", "options": ["眼睛發炎紅腫", "面色蒼白無血色", "皮膚乾燥脫皮", "皮膚上突起的顆粒腫塊"], "ans": 3}, {"q": "「闢」字的正確讀音是甚麼？", "options": ["讀音為pì音", "讀音為bī音", "讀音為pī音", "讀音為bì音"], "ans": 0}, {"q": "「闢」在文中的意思（如透闢）是甚麼？", "options": ["透徹而精妙", "開闢與建設", "駁斥與反駁", "逃避與閃躲"], "ans": 0}, {"q": "琴師彈三弦所用的項目與黑妞、白妞的項目有何不同？琴師是彈三弦子，黑妞與白妞是甚麼？", "options": ["說唱鼓書節目", "民間講古故事", "吟詠古典詩詞", "京劇唱腔表演"], "ans": 0}, {"q": "白妞（王小玉）的姓名在文中第幾段開始提及？", "options": ["文章第四段落", "文章第一段落", "文章第二段落", "文章第六段落"], "ans": 0}, {"q": "黑妞說書的表現令觀眾怎樣，以為觀止矣？", "options": ["歎為觀止讚許", "不知所措慌亂", "昏昏欲睡難耐", "拍案叫絕驚嘆"], "ans": 0}, {"q": "黑妞說書時，轉腔換調之處表現如何？", "options": ["百變不窮精妙", "千篇一律毫無", "單調沉悶乏味", "毫無變化呆板"], "ans": 0}, {"q": "琴師彈奏大調時，聽眾的感受是甚麼？", "options": ["昏昏欲睡疲憊", "不知所謂糊塗", "刺耳難聽嘈雜", "入耳動心陶醉"], "ans": 3}, {"q": "琴師演奏時的指法「輪指」，給人的聽覺印象是甚麼？", "options": ["如萬馬奔騰般", "恍若有幾十根弦幾百個指頭在演奏一般", "如風吹樹葉響", "如細雨紛飛綿"], "ans": 1}];
+
+        let playerName = "";
+        let selectedQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        const screenHome = document.getElementById("screen-home");
+        const screenQuiz = document.getElementById("screen-quiz");
+        const screenResult = document.getElementById("screen-result");
+
+        const playerNameInput = document.getElementById("player-name");
+        const nameAlert = document.getElementById("name-alert");
+        const startBtn = document.getElementById("start-btn");
+
+        const questionCounter = document.getElementById("question-counter");
+        const scoreTracker = document.getElementById("score-tracker");
+        const questionText = document.getElementById("question-text");
+        const optionsList = document.getElementById("options-list");
+        const nextBtn = document.getElementById("next-btn");
+
+        const resultReport = document.getElementById("result-report");
+        const resultScore = document.getElementById("result-score");
+        const resultDetails = document.getElementById("result-details");
+        const restartBtn = document.getElementById("restart-btn");
+        const reviewList = document.getElementById("review-list");
+
+        startBtn.addEventListener("click", () => {
+            playerName = playerNameInput.value.trim();
+            if (!playerName) {
+                nameAlert.textContent = "請先輸入姓名。";
+                playerNameInput.focus();
+                return;
+            }
+            nameAlert.textContent = "";
+            startGame();
+        });
+
+        playerNameInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                startBtn.click();
+            }
+        });
+
+        function startGame() {
+            let shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            selectedQuestions = shuffled.slice(0, 20);
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+
+            screenHome.classList.remove("active");
+            screenQuiz.classList.add("active");
+            loadQuestion();
+        }
+
+        let currentSelectedOption = null;
+
+        function loadQuestion() {
+            currentSelectedOption = null;
+            nextBtn.disabled = true;
+
+            let qObj = selectedQuestions[currentQuestionIndex];
+            questionCounter.textContent = `題目 ${currentQuestionIndex + 1} / 20`;
+            scoreTracker.textContent = `當前得分：${score} 分`;
+            questionText.textContent = `${currentQuestionIndex + 1}. ${qObj.q}`;
+
+            optionsList.innerHTML = "";
+            qObj.options.forEach((opt, idx) => {
+                let li = document.createElement("li");
+                li.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                li.dataset.index = idx;
+                li.addEventListener("click", () => {
+                    document.querySelectorAll(".options-list li").forEach(el => el.classList.remove("selected"));
+                    li.classList.add("selected");
+                    currentSelectedOption = idx;
+                    nextBtn.disabled = false;
+                });
+                optionsList.appendChild(li);
+            });
+        }
+
+        nextBtn.addEventListener("click", () => {
+            if (currentSelectedOption === null) return;
+
+            let qObj = selectedQuestions[currentQuestionIndex];
+            let isCorrect = (currentSelectedOption === qObj.ans);
+            if (isCorrect) {
+                score += 5;
+            }
+
+            userAnswers.push({
+                question: qObj.q,
+                options: qObj.options,
+                selected: currentSelectedOption,
+                correct: qObj.ans,
+                isCorrect: isCorrect
+            });
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 20) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        });
+
+        function showResult() {
+            screenQuiz.classList.remove("active");
+            screenResult.classList.add("active");
+
+            resultReport.textContent = `報告老師！我${playerName}在這個挑戰中得到了${score}分！`;
+            resultScore.textContent = `${score} 分`;
+            let correctCount = userAnswers.filter(ans => ans.isCorrect).length;
+            resultDetails.textContent = `答對 ${correctCount} 題 / 共 20 題 (正確率 ${correctCount * 5}%)`;
+
+            reviewList.innerHTML = "";
+            userAnswers.forEach((ans, idx) => {
+                let itemDiv = document.createElement("div");
+                itemDiv.className = `review-item ${ans.isCorrect ? 'correct' : 'incorrect'}`;
+                
+                let qDiv = document.createElement("div");
+                qDiv.className = "review-q";
+                qDiv.textContent = `Q${idx + 1}: ${ans.question}`;
+                
+                let ansDiv = document.createElement("div");
+                ansDiv.className = "review-ans";
+                
+                let userOptText = ans.selected !== null ? `${String.fromCharCode(65 + ans.selected)}. ${ans.options[ans.selected]}` : "未作答";
+                let correctOptText = `${String.fromCharCode(65 + ans.correct)}. ${ans.options[ans.correct]}`;
+
+                ansDiv.innerHTML = `您的選擇：<span class="user-ans">${userOptText}</span> | 正確答案：<span class="correct-ans">${correctOptText}</span>`;
+
+                itemDiv.appendChild(qDiv);
+                itemDiv.appendChild(ansDiv);
+                reviewList.appendChild(itemDiv);
+            });
+        }
+
+        restartBtn.addEventListener("click", () => {
+            screenResult.classList.remove("active");
+            screenHome.classList.add("home"); // wait, active class on screen-home
+            screenHome.classList.add("active");
+            playerNameInput.value = "";
+            playerNameInput.focus();
+        });
+    </script>
+</body>
+</html>
