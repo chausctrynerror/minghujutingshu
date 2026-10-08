@@ -170,7 +170,7 @@
             border: 2px solid #a9cce3;
         }
         .score-card .report-display {
-            font-size: 24px;
+            font-size: 22px;
             color: var(--primary-color);
             font-weight: bold;
             margin-bottom: 15px;
@@ -185,6 +185,7 @@
         .score-card .details-display {
             font-size: 16px;
             color: #555;
+            margin-top: 10px;
         }
         .review-section {
             margin-top: 30px;
@@ -245,6 +246,7 @@
             <div id="screen-quiz" class="screen">
                 <div class="quiz-header">
                     <span id="question-counter">題目 1 / 20</span>
+                    <span id="timer-display">用時：00:00</span>
                     <span id="score-tracker">當前得分：0 分</span>
                 </div>
                 <div id="question-container">
@@ -264,6 +266,7 @@
                         <div class="report-display" id="result-report">報告老師！我某某在這個挑戰中得到了 0分！</div>
                         <div class="score-display" id="result-score">0 分</div>
                         <div class="details-display" id="result-details">答對 0 題 / 共 20 題</div>
+                        <div class="details-display" id="timer-details" style="font-weight: bold; color: #e67e22; margin-top: 8px;">總用時：0 分 0 秒</div>
                     </div>
                     <button class="btn" id="restart-btn" style="margin-bottom: 30px;">重新挑戰</button>
                     
@@ -278,13 +281,18 @@
     </div>
 
     <script>
-        const allQuestions = [{"q": "《明湖居聽書》的作者是誰？", "options": ["老舍", "魯迅", "朱自清", "劉鶚"], "ans": 3}, {"q": "在《明湖居聽書》第1段中，琴師的衣着是甚麼？", "options": ["黑布長衫", "灰色短打", "青色布褂", "藍布長衫"], "ans": 3}, {"q": "琴師的容貌特徵是甚麼？", "options": ["長長鴨蛋臉兒眉清目秀", "瓜子臉兒面皮白淨娟秀", "長長的臉兒，一臉疙疸，像風乾福橘皮", "方臉粗眉大眼滿臉鬍渣"], "ans": 2}, {"q": "琴師彈大調時，全用甚麼指法？", "options": ["滾動指法", "輪指撥弦", "單挑指法", "雙勾指法"], "ans": 1}, {"q": "琴師彈奏時的音樂效果如何？", "options": ["輕快活潑如流水潺潺節奏明快", "如泣如訴哀怨動人令人傷心", "入耳動心，恍若有幾十根弦，幾百個指頭在演奏一般", "高亢激越震耳欲聾氣勢磅礴"], "ans": 2}, {"q": "琴師演奏時，即使台下的甚麼聲音也壓不下琴音？", "options": ["急促腳步聲", "大聲叫好聲", "熱烈鼓掌聲", "喧鬧說話聲"], "ans": 1}, {"q": "黑妞在第2段中，年齡約是多少？", "options": ["大約十四五歲", "大約十六七歲", "大約二十一二歲", "大約十八九歲"], "ans": 1}, {"q": "黑妞的衣着是甚麼？", "options": ["青色夾襖配灰布裙邊", "白布長衫綴黑色邊框", "藍布外褂褲且黑布鑲滾", "棗紅色土布衣褲套裝"], "ans": 2}, {"q": "黑妞的容貌是甚麼？", "options": ["長長的臉兒滿面疙疸", "圓臉大眼短髮齊肩面容", "瓜子臉兒面皮白淨秀美", "長長鴨蛋臉兒，梳一個抓髻，戴了一副銀耳環"], "ans": 3}, {"q": "黑妞說書時，歌喉遽發，字字清脆，聲聲宛轉，如甚麼？", "options": ["新鶯出谷乳燕歸巢般", "高山流水遇知音絕唱", "百鳥朝鳳鳴叫聲響亮", "大珠小珠落玉盤之聲"], "ans": 0}, {"q": "黑妞說書時，每句幾個字？", "options": ["每句十個字", "每句五個字", "每句三個字", "每句七個字"], "ans": 3}, {"q": "黑妞說書時，每段有多少句？", "options": ["每段大約五句", "每段數十句多", "每段整百句多", "每段大約十句"], "ans": 1}, {"q": "黑妞表演的項目是甚麼？", "options": ["彈奏琵琶曲", "說唱鼓書藝", "三弦子彈唱", "戲曲大合唱"], "ans": 1}, {"q": "白妞（王小玉）在第4段至第5段中，年齡約是多少？", "options": ["大約十八九歲", "大約十五六歲", "大約十六七歲", "大約二十二三歲"], "ans": 0}, {"q": "白妞的衣着裝束怎樣？", "options": ["裝束與前一個黑妞一樣", "比黑妞華麗得多呀", "穿着平民布衣裳褲", "穿着宮廷戲服裝束"], "ans": 0}, {"q": "白妞的容貌是：瓜子臉兒，面皮白淨，只覺得秀而不媚，清而不寒，雙眼如甚麼？", "options": ["星光閃電寶石深潭中映照着明鏡微波", "秋水寒星寶珠白水銀裏頭養着兩丸黑水銀", "明月清風碧水水晶瓶中藏着兩枚夜明珠", "清泉明鏡琥珀碧波中游着雙魚活潑靈動"], "ans": 1}, {"q": "白妞的唇齒特徵是甚麼？", "options": ["貝齒紅唇亮麗", "唇紅齒白分明", "薄唇白齒面容", "櫻桃小口微開"], "ans": 1}, {"q": "作者形容白妞的歌聲像甚麼拋入天際？", "options": ["一條長絲線", "一道閃電光", "一根細銀針", "一線鋼絲索"], "ans": 3}, {"q": "作者形容白妞的歌聲恍如由甚麼西面攀登泰山？", "options": ["傲來峰西面", "玉皇頂西面", "日觀峰西面", "天柱峰西面"], "ans": 0}, {"q": "作者形容白妞的歌聲如一條飛蛇，在哪裏盤旋穿插？", "options": ["廬山三疊泉瀑布流經", "黃山三十六峰半中腰裏", "華山長空棧道險峻處", "泰山十八盤山道之中"], "ans": 1}, {"q": "作者形容白妞的歌聲像甚麼，一個彈子上天，隨化作千百道五色火光？", "options": ["耀眼夜空流星", "璀璨節慶爆竹", "高空信號彈光", "絢麗東洋煙火"], "ans": 3}, {"q": "字詞「疸」在文中的意思是甚麼？", "options": ["眼睛發炎紅腫", "面色蒼白無血色", "皮膚乾燥脫皮", "皮膚上突起的顆粒腫塊"], "ans": 3}, {"q": "「闢」字的正確讀音是甚麼？", "options": ["讀音為pì音", "讀音為bī音", "讀音為pī音", "讀音為bì音"], "ans": 0}, {"q": "「闢」在文中的意思（如透闢）是甚麼？", "options": ["透徹而精妙", "開闢與建設", "駁斥與反駁", "逃避與閃躲"], "ans": 0}, {"q": "琴師彈三弦所用的項目與黑妞、白妞的項目有何不同？琴師是彈三弦子，黑妞與白妞是甚麼？", "options": ["說唱鼓書節目", "民間講古故事", "吟詠古典詩詞", "京劇唱腔表演"], "ans": 0}, {"q": "白妞（王小玉）的姓名在文中第幾段開始提及？", "options": ["文章第四段落", "文章第一段落", "文章第二段落", "文章第六段落"], "ans": 0}, {"q": "黑妞說書的表現令觀眾怎樣，以為觀止矣？", "options": ["歎為觀止讚許", "不知所措慌亂", "昏昏欲睡難耐", "拍案叫絕驚嘆"], "ans": 0}, {"q": "黑妞說書時，轉腔換調之處表現如何？", "options": ["百變不窮精妙", "千篇一律毫無", "單調沉悶乏味", "毫無變化呆板"], "ans": 0}, {"q": "琴師彈奏大調時，聽眾的感受是甚麼？", "options": ["昏昏欲睡疲憊", "不知所謂糊塗", "刺耳難聽嘈雜", "入耳動心陶醉"], "ans": 3}, {"q": "琴師演奏時的指法「輪指」，給人的聽覺印象是甚麼？", "options": ["如萬馬奔騰般", "恍若有幾十根弦幾百個指頭在演奏一般", "如風吹樹葉響", "如細雨紛飛綿"], "ans": 1}];
+        const allQuestions = [{"q": "《明湖居聽書》的作者是誰？", "options": ["老舍", "魯迅", "朱自清", "劉鶚"], "ans": 3}, {"q": "在《明湖居聽書》第1段中，琴師的衣着是甚麼？", "options": ["黑布長衫", "灰色短打", "青色布褂", "藍布長衫"], "ans": 3}, {"q": "琴師的容貌特徵是甚麼？", "options": ["長長鴨蛋臉兒眉清目秀", "瓜子臉兒面皮白淨娟秀", "長長的臉兒，一臉疙疸", "方臉粗眉大眼滿臉鬍渣"], "ans": 2}, {"q": "琴師彈大調時，全用甚麼指法？", "options": ["滾動指法", "輪指撥弦", "單挑指法", "雙勾指法"], "ans": 1}, {"q": "琴師彈奏時的音樂效果如何？", "options": ["輕快活潑如流水潺潺節奏明快", "如泣如訴哀怨動人令人傷心", "入耳動心，恍若有幾十根弦，幾百個指頭在演奏一般", "高亢激越震耳欲聾氣勢磅礴"], "ans": 2}, {"q": "琴師演奏時，即使台下的甚麼聲音也壓不下琴音？", "options": ["急促腳步聲", "大聲叫好聲", "熱烈鼓掌聲", "喧鬧說話聲"], "ans": 1}, {"q": "黑妞在第2段中，年齡約是多少？", "options": ["大約十四五歲", "大約十六七歲", "大約二十一二歲", "大約十八九歲"], "ans": 1}, {"q": "黑妞的衣着是甚麼？", "options": ["青色夾襖配灰布裙邊", "白布長衫綴黑色邊框", "藍布外褂褲且黑布鑲滾", "棗紅色土布衣褲套裝"], "ans": 2}, {"q": "黑妞的容貌是甚麼？", "options": ["長長的臉兒滿面疙疸", "圓臉大眼短髮齊肩面容", "瓜子臉兒面皮白淨秀美", "長長鴨蛋臉兒，梳一個抓髻，戴了一副銀耳環"], "ans": 3}, {"q": "黑妞說書時，歌喉遽發，字字清脆，聲聲宛轉，如甚麼？", "options": ["新鶯出谷，乳燕歸巢", "高山流水，知音絕唱", "百鳥朝鳳，鳴叫響亮", "大珠小珠，滾落玉盤"], "ans": 0}, {"q": "黑妞說書時，每句幾個字？", "options": ["每句十個字", "每句五個字", "每句三個字", "每句七個字"], "ans": 3}, {"q": "黑妞說書時，每段有多少句？", "options": ["每段大約五句", "每段數十句多", "每段整百句多", "每段大約十句"], "ans": 1}, {"q": "黑妞表演的項目是甚麼？", "options": ["彈奏琵琶曲", "說唱鼓書藝", "三弦子彈唱", "戲曲大合唱"], "ans": 1}, {"q": "白妞（王小玉）在第4段至第5段中，年齡約是多少？", "options": ["大約十八九歲", "大約十五六歲", "大約十六七歲", "大約二十二三歲"], "ans": 0}, {"q": "白妞的衣着裝束怎樣？", "options": ["裝束與前一個黑妞一樣", "比黑妞華麗得多呀", "穿着平民布衣裳褲", "穿着宮廷戲服裝束"], "ans": 0}, {"q": "白妞的容貌是：瓜子臉兒，面皮白淨，只覺得秀而不媚，清而不寒，雙眼如甚麼？", "options": ["星光閃電寶石深潭中映照着明鏡微波", "秋水寒星寶珠白水銀裏頭養着兩丸黑水銀", "明月清風碧水水晶瓶中藏着兩枚夜明珠", "清泉明鏡琥珀碧波中游着雙魚活潑靈動"], "ans": 1}, {"q": "白妞的唇齒特徵是甚麼？", "options": ["貝齒紅唇亮麗", "唇紅齒白分明", "薄唇白齒面容", "櫻桃小口微開"], "ans": 1}, {"q": "作者形容白妞的歌聲像甚麼拋入天際？", "options": ["一條長絲線", "一道閃電光", "一根細銀針", "一線鋼絲索"], "ans": 3}, {"q": "作者形容白妞的歌聲恍如由甚麼西面攀登泰山？", "options": ["傲來峰西面", "玉皇頂西面", "日觀峰西面", "天柱峰西面"], "ans": 0}, {"q": "作者形容白妞的歌聲如一條飛蛇，在哪裏盤旋穿插？", "options": ["廬山三疊泉瀑布流經", "黃山三十六峰半中腰裏", "華山長空棧道險峻處", "泰山十八盤山道之中"], "ans": 1}, {"q": "作者形容白妞的歌聲像甚麼，一個彈子上天，隨化作千百道五色火光？", "options": ["耀眼夜空流星", "璀璨節慶爆竹", "高空信號彈光", "絢麗東洋煙火"], "ans": 3}, {"q": "字詞「疸」在文中的意思是甚麼？", "options": ["眼睛發炎紅腫", "面色蒼白無血色", "皮膚乾燥脫皮", "皮膚上突起的顆粒腫塊"], "ans": 3}, {"q": "「闢」字的正確讀音是甚麼？", "options": ["讀音為pì音", "讀音為bī音", "讀音為pī音", "讀音為bì音"], "ans": 0}, {"q": "「闢」在文中的意思（如透闢）是甚麼？", "options": ["透徹而精妙", "開闢與建設", "駁斥與反駁", "逃避與閃躲"], "ans": 0}, {"q": "琴師彈三弦所用的項目與黑妞、白妞的項目有何不同？琴師是彈三弦子，黑妞與白妞是甚麼？", "options": ["說唱鼓書節目", "民間講古故事", "吟詠古典詩詞", "京劇唱腔表演"], "ans": 0}, {"q": "白妞（王小玉）的姓名在文中第幾段開始提及？", "options": ["文章第四段落", "文章第一段落", "文章第二段落", "文章第六段落"], "ans": 0}, {"q": "黑妞說書的表現令觀眾怎樣，以為觀止矣？", "options": ["歎為觀止讚許", "不知所措慌亂", "昏昏欲睡難耐", "拍案叫絕驚嘆"], "ans": 0}, {"q": "黑妞說書時，轉腔換調之處表現如何？", "options": ["百變不窮", "千篇一律", "單調沉悶", "毫無變化"], "ans": 0}, {"q": "琴師彈奏大調時，聽眾的感受是甚麼？", "options": ["昏昏欲睡", "不知所謂", "刺耳難聽", "入耳動心"], "ans": 3}, {"q": "琴師演奏時的指法「輪指」，給人的聽覺印象是甚麼？", "options": ["如萬馬奔騰般", "恍若有幾十根弦幾百個指頭在演奏一般", "如風吹樹葉響", "如細雨紛飛綿"], "ans": 1}];
 
         let playerName = "";
         let selectedQuestions = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let userAnswers = [];
+
+        // Timer variables
+        let startTime = null;
+        let timerInterval = null;
+        let finalElapsedSeconds = 0;
 
         const screenHome = document.getElementById("screen-home");
         const screenQuiz = document.getElementById("screen-quiz");
@@ -296,6 +304,7 @@
 
         const questionCounter = document.getElementById("question-counter");
         const scoreTracker = document.getElementById("score-tracker");
+        const timerDisplay = document.getElementById("timer-display");
         const questionText = document.getElementById("question-text");
         const optionsList = document.getElementById("options-list");
         const nextBtn = document.getElementById("next-btn");
@@ -303,6 +312,7 @@
         const resultReport = document.getElementById("result-report");
         const resultScore = document.getElementById("result-score");
         const resultDetails = document.getElementById("result-details");
+        const timerDetails = document.getElementById("timer-details");
         const restartBtn = document.getElementById("restart-btn");
         const reviewList = document.getElementById("review-list");
 
@@ -332,7 +342,20 @@
 
             screenHome.classList.remove("active");
             screenQuiz.classList.add("active");
+
+            // Start timer
+            startTime = Date.now();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+
             loadQuestion();
+        }
+
+        function updateTimer() {
+            let elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+            let mins = Math.floor(elapsedSec / 60);
+            let secs = elapsedSec % 60;
+            timerDisplay.textContent = `用時：${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
         let currentSelectedOption = null;
@@ -382,6 +405,9 @@
             if (currentQuestionIndex < 20) {
                 loadQuestion();
             } else {
+                // Stop timer
+                clearInterval(timerInterval);
+                finalElapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
                 showResult();
             }
         });
@@ -390,10 +416,14 @@
             screenQuiz.classList.remove("active");
             screenResult.classList.add("active");
 
-            resultReport.textContent = `報告老師！我${playerName}在這個挑戰中得到了${score}分！`;
+            resultReport.textContent = `報告老師！我「${playerName}」在這個挑戰中得到了「${score}分」！`;
             resultScore.textContent = `${score} 分`;
             let correctCount = userAnswers.filter(ans => ans.isCorrect).length;
             resultDetails.textContent = `答對 ${correctCount} 題 / 共 20 題 (正確率 ${correctCount * 5}%)`;
+
+            let mins = Math.floor(finalElapsedSeconds / 60);
+            let secs = finalElapsedSeconds % 60;
+            timerDetails.textContent = `總用時：${mins} 分 ${secs} 秒`;
 
             reviewList.innerHTML = "";
             userAnswers.forEach((ans, idx) => {
@@ -420,7 +450,6 @@
 
         restartBtn.addEventListener("click", () => {
             screenResult.classList.remove("active");
-            screenHome.classList.add("home"); // wait, active class on screen-home
             screenHome.classList.add("active");
             playerNameInput.value = "";
             playerNameInput.focus();
